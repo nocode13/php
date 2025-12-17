@@ -1,5 +1,5 @@
 # Dependencies
-# /vendor/
+/vendor/
 composer.lock
 
 # Environment variables
@@ -15,6 +15,7 @@ composer.lock
 *~
 
 # OS
+.DS_Store
 Thumbs.db
 
 # Logs
