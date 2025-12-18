@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\exceptions\Exceptions;
 use App\modules\auth\AuthController;
 use App\modules\env\EnvService;
 use App\modules\user\UserController;
@@ -22,6 +23,8 @@ class Application
       exit;
     }
 
+    header('Content-Type: application/json; charset=utf-8');
+
     if (UserController::checkPath($path)) {
       new UserController()->run($path, $method);
     }
@@ -30,8 +33,6 @@ class Application
       new AuthController()->run($path, $method);
     }
 
-
-    http_response_code(404);
-    echo '<h1>Not found</h1>';
+    Exceptions::notFound();
   }
 }
