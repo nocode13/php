@@ -28,5 +28,15 @@ class AuthController implements Controller
       $data = json_decode(file_get_contents('php://input'), true);
       $this->authService->singUp($data);
     }
+
+    if (preg_match('#^/auth/login/?$#', $path) && $method === 'POST') {
+      $data = json_decode(file_get_contents('php://input'), true);
+      $this->authService->login($data);
+    }
+
+    if (preg_match('#^/auth/refresh/?$#', $path) && $method === 'POST') {
+      $data = json_decode(file_get_contents('php://input'), true);
+      $this->authService->refresh($data);
+    }
   }
 }

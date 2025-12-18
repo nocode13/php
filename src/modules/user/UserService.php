@@ -2,6 +2,8 @@
 
 namespace App\modules\user;
 
+use App\exceptions\Exceptions;
+use App\formatter\Formatter;
 use App\modules\db\DBService;
 use PDO;
 
@@ -16,11 +18,13 @@ class UserService
 
   public function findAll()
   {
-    $stmt = $this->postgres->pdo->query('SELECT * FROM users');
-    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    try {
+      $stmt = $this->postgres->pdo->query('SELECT id, email FROM users');
+      $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($users);
-    exit;
+      Formatter::response($users);
+    } catch (\Throwable $th) {
+      Exceptions::undefined();
+    }
   }
 }
