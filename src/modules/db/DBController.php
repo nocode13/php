@@ -7,14 +7,7 @@ use App\modules\jwt\JwtService;
 
 class DBController implements Controller
 {
-  private DBService $dbService;
-  private JwtService $jwtService;
-
-  public function __construct()
-  {
-    $this->dbService = new DBService();
-    $this->jwtService = new JwtService();
-  }
+  public function __construct(private DBService $dbService, private JwtService $jwtService) {}
 
   public static function checkPath(): bool
   {
