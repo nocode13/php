@@ -64,7 +64,7 @@ class AuthService
 
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $tokens = $this->jwtService->generate($user->id, $user->email);
+    $tokens = $this->jwtService->generate($user['id'], $user['email']);
 
     Formatter::response([
       'tokens' => $tokens,
@@ -88,7 +88,7 @@ class AuthService
       Exceptions::unauthorized();
     }
 
-    $tokens = $this->jwtService->generate($refreshTokenState['id'], $refreshTokenState['id']);
+    $tokens = $this->jwtService->generate($refreshTokenState['id'], $refreshTokenState['email']);
 
     Formatter::response($tokens);
   }
