@@ -25,4 +25,22 @@ class DBService
 
     $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   }
+
+  public function migrate()
+  {
+    $files = scandir(__DIR__ . '/migrations');
+
+
+
+    foreach ($files as $file) {
+      if (!str_ends_with($file, '.sql')) {
+        continue;
+      }
+
+      $content = file_get_contents(__DIR__ . '/migrations/' . $file);
+
+      $this->pdo->exec($content);
+    }
+    exit;
+  }
 }
