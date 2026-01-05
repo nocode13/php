@@ -8,14 +8,7 @@ use App\modules\jwt\JwtService;
 
 class UserController implements Controller
 {
-  private $userService;
-  private $jwtService;
-
-  public function __construct()
-  {
-    $this->userService = new UserService();
-    $this->jwtService = new JwtService();
-  }
+  public function __construct(private UserService $userService, private JwtService $jwtService) {}
 
   static function checkPath(): bool
   {

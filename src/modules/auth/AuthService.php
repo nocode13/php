@@ -2,49 +2,41 @@
 
 namespace App\modules\auth;
 
+use App\entities\User;
 use App\exceptions\Exceptions;
 use App\formatter\Formatter;
 use App\modules\db\DBService;
 use App\modules\jwt\JwtService;
-use PDO;
+use PDOException;
 
 class AuthService
 {
-  private $dbService;
-  private $jwtService;
-
-  public function __construct()
-  {
-    $this->dbService = new DBService();
-    $this->jwtService = new JwtService();
-  }
+  public function __construct(private DBService $dbService, private JwtService $jwtService) {}
 
   public function login(array $body)
   {
-    $stmt = $this->dbService->pdo->prepare('SELECT * FROM users WHERE email = :e');
-    $stmt->bindValue(':e', $body['email']);
-    $stmt->execute();
+    $users = $this->dbService->query('SELECT * FROM users WHERE email = :e', [':e' => $body['email']], User::class);
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$user) {
+    if (!sizeof($users)) {
       Exceptions::invalidCredentials();
     }
 
-    $verified = password_verify($body['password'], $user['hash']);
+    $user = $users[0];
+
+    $verified = password_verify($body['password'], $user->hash);
 
     if (!$verified) {
       Exceptions::invalidCredentials();
     }
 
-    $tokens = $this->jwtService->generate($user['id'], $user['email']);
+    $tokens = $this->jwtService->generate($user->id, $user->email);
 
     Formatter::response([
       'tokens' => $tokens,
-      'user' => array([
-        'id' => $user['id'],
-        'email' => $user['email'],
-      ]),
+      'user' => [
+        'id' => $user->id,
+        'email' => $user->email,
+      ],
     ]);
   }
 
@@ -53,18 +45,14 @@ class AuthService
     $hash = password_hash($body['password'], PASSWORD_DEFAULT);
 
     try {
-      $stmt = $this->dbService->pdo->prepare('INSERT INTO users (email, hash) VALUES (:e, :h) RETURNING id, email');
-      $stmt->bindValue(':e', $body['email']);
-      $stmt->bindValue(':h', $hash);
-      $stmt->execute();
-    } catch (\Throwable $th) {
-      $code = $stmt->errorCode();
+      $users = $this->dbService->query('INSERT INTO users (email, hash) VALUES (:e, :h) RETURNING id, email', [':e' => $body['email'], ':h' => $hash], User::class);
+      $user = $users[0];
+    } catch (PDOException $th) {
+      $code = $th->getCode();
       $code === '23505' ? Exceptions::alreadyExists() : Exceptions::undefined();
     }
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    $tokens = $this->jwtService->generate($user['id'], $user['email']);
+    $tokens = $this->jwtService->generate($user->id, $user->email);
 
     Formatter::response([
       'tokens' => $tokens,

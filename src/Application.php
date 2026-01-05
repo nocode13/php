@@ -7,13 +7,13 @@ use App\modules\auth\AuthController;
 use App\modules\db\DBController;
 use App\modules\env\EnvService;
 use App\modules\user\UserController;
+use App\Container;
+
+$counter = 0;
 
 class Application
 {
-  public function __construct()
-  {
-    new EnvService();
-  }
+  public function __construct(private Container $container, private EnvService $envService) {}
   public function run()
   {
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -26,15 +26,15 @@ class Application
     header('Content-Type: application/json; charset=utf-8');
 
     if (UserController::checkPath()) {
-      new UserController()->run();
+      $this->container->get(UserController::class)->run();
     }
 
     if (AuthController::checkPath()) {
-      new AuthController()->run();
+      $this->container->get(AuthController::class)->run();
     }
 
     if (DBController::checkPath()) {
-      new DBController()->run();
+      $this->container->get(DBController::class)->run();
     }
 
     Exceptions::notFound();

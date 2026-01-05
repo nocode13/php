@@ -6,12 +6,7 @@ use App\abstractions\Controller;
 
 class AuthController implements Controller
 {
-  private $authService;
-
-  public function __construct()
-  {
-    $this->authService = new AuthService();
-  }
+  public function __construct(private AuthService $authService) {}
 
   public static function checkPath(): bool
   {
