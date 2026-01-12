@@ -27,10 +27,14 @@ class DBService
     $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   }
 
-  public function query(string $sql, array $params = [], $class = stdClass::class)
+  public function query(string $sql, array $params = [], $class = null)
   {
     $sth = $this->dbh->prepare($sql);
     $sth->execute($params);
+
+    if ($class === null) {
+      return $sth->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     return $sth->fetchAll(PDO::FETCH_CLASS, $class);
   }
