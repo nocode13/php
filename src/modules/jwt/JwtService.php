@@ -17,14 +17,14 @@ class JwtService
       'userId' => $userId,
       'email' => $email,
       'iat' => time(),
-      'exp' => time() + 120,
+      'exp' => time() + 60 * 60 * 1,
     ], $secret, 'HS256');
 
     $refreshToken = JWT::encode([
       'userId' => $userId,
       'email' => $email,
       'iat' => time(),
-      'exp' => time() + 180,
+      'exp' => time() + 60 * 60 * 12,
     ], $secret, 'HS256');
 
     return [

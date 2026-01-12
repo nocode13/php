@@ -36,6 +36,8 @@ class AuthService
       'user' => [
         'id' => $user->id,
         'email' => $user->email,
+        'created_at' => $user->created_at,
+        'updated_at' => $user->updated_at,
       ],
     ]);
   }
@@ -45,7 +47,7 @@ class AuthService
     $hash = password_hash($body['password'], PASSWORD_DEFAULT);
 
     try {
-      $users = $this->dbService->query('INSERT INTO users (email, hash) VALUES (:e, :h) RETURNING id, email', [':e' => $body['email'], ':h' => $hash], User::class);
+      $users = $this->dbService->query('INSERT INTO users (email, hash) VALUES (:e, :h) RETURNING id, email, created_at, updated_at', [':e' => $body['email'], ':h' => $hash], User::class);
       $user = $users[0];
     } catch (PDOException $th) {
       $code = $th->getCode();

@@ -34,22 +34,32 @@ class Exceptions
     exit;
   }
 
-  static function undefined()
+  static function undefined($message = 'Something went wrong')
   {
     http_response_code(500);
     echo json_encode([
       'status' => 'error',
-      'message' => 'Something went wrong'
+      'message' => $message
     ]);
     exit;
   }
 
-  static function notFound()
+  static function notFound(string $message = 'Not found')
   {
     http_response_code(404);
     echo json_encode([
       'status' => 'error',
-      'message' => 'Not found'
+      'message' => $message
+    ]);
+    exit;
+  }
+
+  static function forbidden(string $message = 'You do not have access to this action')
+  {
+    http_response_code(403);
+    echo json_encode([
+      'status' => 'error',
+      'message' => $message
     ]);
     exit;
   }

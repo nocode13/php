@@ -2,11 +2,11 @@
 
 namespace App\entities;
 
-class User
+class Chat
 {
   public int $id;
-  public string $email;
-  public string $hash;
+  public string $name;
   public string $created_at;
   public string $updated_at;
+  public array $members;
 }

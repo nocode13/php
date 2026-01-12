@@ -14,7 +14,7 @@ class UserService
   public function findAll()
   {
     try {
-      $users = $this->dbService->query('SELECT id, email FROM users', [], User::class);
+      $users = $this->dbService->query('SELECT id, email, created_at, updated_at FROM users', [], User::class);
 
       Formatter::response($users);
     } catch (\Throwable $th) {

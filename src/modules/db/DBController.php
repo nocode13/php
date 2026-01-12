@@ -3,11 +3,10 @@
 namespace App\modules\db;
 
 use App\abstractions\Controller;
-use App\modules\jwt\JwtService;
 
 class DBController implements Controller
 {
-  public function __construct(private DBService $dbService, private JwtService $jwtService) {}
+  public function __construct(private DBService $dbService) {}
 
   public static function checkPath(): bool
   {
@@ -19,7 +18,6 @@ class DBController implements Controller
   {
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $method = $_SERVER['REQUEST_METHOD'];
-    $credentials = $this->jwtService->verify();
 
     if (preg_match('#^/migrate/?$#', $path) && $method === 'POST') {
       $this->dbService->migrate();
