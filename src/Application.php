@@ -9,6 +9,7 @@ use App\modules\env\EnvService;
 use App\modules\user\UserController;
 use App\Container;
 use App\modules\chat\ChatController;
+use App\modules\message\MessageController;
 
 $counter = 0;
 
@@ -40,6 +41,10 @@ class Application
 
     if (ChatController::checkPath()) {
       $this->container->get(ChatController::class)->run();
+    }
+
+    if (MessageController::checkPath()) {
+      $this->container->get(MessageController::class)->run();
     }
 
     Exceptions::notFound();
